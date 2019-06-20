@@ -21,22 +21,9 @@
 			<view class="unit-item">
 				<view class="unit-item__label">名称：</view>
 				<input-autocomplete class="unit-item__input" :value="testObj.sname" v-model="testObj.sname" placeholder="请输入报价单名称"
-				 highlightColor="#FF0000" :stringList="autocompleteStringList"></input-autocomplete>
+				 highlightColor="#FF0000" :stringList="autocompleteStringList" v-on:selectItem="selectItemS"></input-autocomplete>
 			</view>
 		</view>
-
-		<!-- <view class="unit-item">
-     
-	 <strAutocomplete
-  :stringList="stringList"
-  @select="selectOne"
-  highlightColor="#FF0000"
-  v-model="title"
-></strAutocomplete>
-	
-     
-	 
-</view> -->
 	</view>
 </template>
 
@@ -60,7 +47,12 @@
 						text: 'hello',
 						//其它字段根据业务需要添加
 						key: 'hello key'
-					}, '不 行', '我是静态数据'
+					}, '不 行', {
+						//自定义数据对象必须要有text属性
+						text: '我是静态数据',
+						//其它字段根据业务需要添加
+						id: 'hz'
+					}
 				],
 				nickNames: '匿名用户',
 				avatarUrl: '../../../static/logo.png',
@@ -80,7 +72,6 @@
 		methods: {
 			loadAutocompleteData(value) {
 				console.log('每次输入经过防抖处理以后都会进到这里。')
-
 
 				// 正确的做法：在这个方法内写完所有取数据的逻辑
 				let url =
@@ -114,81 +105,17 @@
 				//return Promise.resolve(['汉字行', 'da tang', '三人行', '大马路', '8哥', '我是动态数据']);
 			},
 			selectItemD(data) {
+				//选择事件
 				console.log('收到数据了:', data);
 			},
-			selectOne(opt) {
-				console.log(opt)
+			selectItemS(data) {
+				//选择事件
+				console.log('收到数据了:', data);
 			}
-			//在这里可动态加载提示数据，input-autocomplete有做防抖处理（需设置debounce属性）
-			// loadAutocompleteData(value) {
-			//     console.log('每次输入经过防抖处理以后都会进到这里');
-			//     return Promise.resolve(['汉字行', 'da tang', '三人行', '大马路', '8哥','我是动态数据']);
-			// }
 		},
 
 		onLoad: function(option) {
 			let that = this;
-
-			// 			uni.getProvider({
-			// 				service: 'oauth',
-			// 				success: function(res) {
-			// 					console.log(res.provider);
-			// 					//支持微信、qq和微博等
-			// 					if (~res.provider.indexOf('weixin')) {
-			// 						uni.login({
-			// 							provider: 'weixin',
-			// 							success: function(loginRes) {
-			// 								console.log('-------获取openid(unionid)-----');
-			// 								console.log(JSON.stringify(loginRes));
-			// 								// 获取用户信息
-			// 								uni.getUserInfo({
-			// 									provider: 'weixin',
-			// 									success: function(infoRes) {
-			// 										console.log('-------获取微信用户所有-----');
-			// 										console.log(JSON.stringify(infoRes.userInfo));
-			// 									}
-			// 								});
-			// 							}
-			// 						});
-			// 					}
-			// 				}
-			// 			});
-			// 
-
-			//uni.login({
-			//	provider: 'weixin',
-			//	success: function(loginRes) {
-			//	console.log(loginRes);
-			// 获取用户信息
-			// 					uni.getSetting({
-			// success(res) {
-			// if (!res.authSetting['scope.userInfo']) {
-			// wx.authorize({
-			// scope: 'scope.userInfo',
-			// success() {
-			// // 用户已经同意小程序使用录音功能，后续调用 wx.startRecord 接口不会弹窗询问
-			//  uni.getUserInfo({
-			//  	provider: 'weixin',
-			//  	success: function(infoRes) {
-			//  		console.log(infoRes);
-			//  		that._data.nickNames = infoRes.userInfo.nickName;
-			//  		that._data.avatarUrl = infoRes.userInfo.avatarUrl;
-			//  	},  
-			//      fail:function(res){  
-			//          // 这里res = {"errMsg":"getUserInfo:fail scope unauthorized"}   
-			//          console.log('res='+JSON.stringify(res))  
-			//      }  
-			//  });
-			// }
-			// })
-			// }
-			// }
-			// });
-
-
-			//}
-			//	});
-
 		}
 	}
 </script>
