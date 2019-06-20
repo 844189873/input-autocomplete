@@ -54,7 +54,7 @@
 					dname: '动态'
 				},
 				//使用静态数据
-				autocompleteStringList: ['汉字行', 'guang zhou', ,
+				autocompleteStringList: ['汉字行', 'guang zhou',
 					{
 						//自定义数据对象必须要有text属性
 						text: 'hello',
