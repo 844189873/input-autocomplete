@@ -1,26 +1,45 @@
 <template>
-	<view class="page">
-		<view class="content">
-			<view class="unit-title">使用动态数据示例</view>
-			<view class="unit-wrapper">
-				<view class="unit-item">
-					<view class="unit-item__label">名称：</view>
-					<input-autocomplete class="unit-item__input" :value="testObj.dname" v-model="testObj.dname" placeholder="请输入报价单名称"
-					 highlightColor="#FF0000" :loadData="loadAutocompleteData"></input-autocomplete>
-				</view>
-			</view>
-			<view class="unit-title">使用静态数据示例</view>
-			<view class="unit-wrapper">
-				<view class="unit-item">
-					<view class="unit-item__label">名称：</view>
-					<input-autocomplete class="unit-item__input" :value="testObj.sname" v-model="testObj.sname" placeholder="请输入报价单名称"
-					 highlightColor="#FF0000" :stringList="autocompleteStringList"></input-autocomplete>
-				</view>
-			</view>
-			<button @tap="printLog">打印结果</button>
+	<view>
+		<view class="userBox">
+			<!-- 昵称 -->
+			<text class="nickName">{{nickNames}}</text>
+			<!-- 头像 -->
+			<image class="userIcon" :src="avatarUrl">头像</image>
+			<button bindgetuserinfo="getUserInfo" open-type='getUserInfo'>点击授权</button>
 		</view>
+
+		<view class="unit-title">使用动态数据示例</view>
+		<view class="unit-wrapper">
+			<view class="unit-item">
+				<view class="unit-item__label">名称：</view>
+				<input-autocomplete class="unit-item__input" :value="testObj.dname" v-model="testObj.dname" placeholder="请输入报价单名称"
+				 highlightColor="#FF0000" :loadData="loadAutocompleteData" v-on:selectItem="selectItemD"></input-autocomplete>
+			</view>
+		</view>
+		<view class="unit-title">使用静态数据示例</view>
+		<view class="unit-wrapper">
+			<view class="unit-item">
+				<view class="unit-item__label">名称：</view>
+				<input-autocomplete class="unit-item__input" :value="testObj.sname" v-model="testObj.sname" placeholder="请输入报价单名称"
+				 highlightColor="#FF0000" :stringList="autocompleteStringList"></input-autocomplete>
+			</view>
+		</view>
+
+		<!-- <view class="unit-item">
+     
+	 <strAutocomplete
+  :stringList="stringList"
+  @select="selectOne"
+  highlightColor="#FF0000"
+  v-model="title"
+></strAutocomplete>
+	
+     
+	 
+</view> -->
 	</view>
 </template>
+
 
 <script>
 	import inputAutocomplete from '@/components/input-autocomplete/input-autocomplete.vue';
@@ -35,20 +54,34 @@
 					dname: '动态'
 				},
 				//使用静态数据
-				autocompleteStringList: ['汉字行', 'guang zhou', 'hello', '不 行', '我是静态数据']
-			};
+				autocompleteStringList: ['汉字行', 'guang zhou', ,
+					{
+						//自定义数据对象必须要有text属性
+						text: 'hello',
+						//其它字段根据业务需要添加
+						key: 'hello key'
+					}, '不 行', '我是静态数据'
+				],
+				nickNames: '匿名用户',
+				avatarUrl: '../../../static/logo.png',
+				show: '',
+				hidden: '',
+				title: 'Hello',
+				stringList: [
+					'apple',
+					'string',
+					'delicious',
+					'everything',
+					'somethingWrong',
+					'中古国'
+				]
+			}
 		},
-		onLoad() {},
 		methods: {
-			//在这里可动态加载提示数据，input-autocomplete有做防抖处理（需设置debounce属性）
 			loadAutocompleteData(value) {
-				console.log(`每次输入经过防抖处理以后都会进到这里。
-				注意：由于子组调用到父组的方法，这里拿到的this对象实际上是子组件，
-				所这个方法内通过this去调用其它方法是有问题的`);
-				
-				// 错误的做法：像下面这样子想调用当前组件内的方法是不行的
-				// this.$options.methods.printLog();
-				
+				console.log('每次输入经过防抖处理以后都会进到这里。')
+
+
 				// 正确的做法：在这个方法内写完所有取数据的逻辑
 				let url =
 					"https://www.apiopen.top/journalismApi";
@@ -58,28 +91,136 @@
 					ret => {
 						var [error, res] = ret;
 						console.log(res.data);
-						let data=((res.data||{}).data||{}).toutiao||[];
-						if(data.length<=0){
+						let data = ((res.data || {}).data || {}).toutiao || [];
+						if (data.length <= 0) {
 							return Promise.resolve(['没有数据...']);
 						}
-						
-						let retData=[];
-						for(let it of data){
-							console.log(it);
-							retData.push(it.title);
+
+						let retData = [];
+						for (let it of data) {
+							// console.log(it);
+							retData.push({
+								//自定义数据对象必须要有text属性
+								text: it.title,
+								//其它字段根据业务需要添加
+								digest: it.digest
+							});
 						}
+						//console.log(Promise.resolve(retData));
 						return Promise.resolve(retData);
 					}
 				)
-				
+
 				//return Promise.resolve(['汉字行', 'da tang', '三人行', '大马路', '8哥', '我是动态数据']);
 			},
-			printLog() {
-				console.log(this.testObj);
+			selectItemD(data) {
+				console.log('收到数据了:', data);
+			},
+			selectOne(opt) {
+				console.log(opt)
 			}
+			//在这里可动态加载提示数据，input-autocomplete有做防抖处理（需设置debounce属性）
+			// loadAutocompleteData(value) {
+			//     console.log('每次输入经过防抖处理以后都会进到这里');
+			//     return Promise.resolve(['汉字行', 'da tang', '三人行', '大马路', '8哥','我是动态数据']);
+			// }
+		},
+
+		onLoad: function(option) {
+			let that = this;
+
+			// 			uni.getProvider({
+			// 				service: 'oauth',
+			// 				success: function(res) {
+			// 					console.log(res.provider);
+			// 					//支持微信、qq和微博等
+			// 					if (~res.provider.indexOf('weixin')) {
+			// 						uni.login({
+			// 							provider: 'weixin',
+			// 							success: function(loginRes) {
+			// 								console.log('-------获取openid(unionid)-----');
+			// 								console.log(JSON.stringify(loginRes));
+			// 								// 获取用户信息
+			// 								uni.getUserInfo({
+			// 									provider: 'weixin',
+			// 									success: function(infoRes) {
+			// 										console.log('-------获取微信用户所有-----');
+			// 										console.log(JSON.stringify(infoRes.userInfo));
+			// 									}
+			// 								});
+			// 							}
+			// 						});
+			// 					}
+			// 				}
+			// 			});
+			// 
+
+			//uni.login({
+			//	provider: 'weixin',
+			//	success: function(loginRes) {
+			//	console.log(loginRes);
+			// 获取用户信息
+			// 					uni.getSetting({
+			// success(res) {
+			// if (!res.authSetting['scope.userInfo']) {
+			// wx.authorize({
+			// scope: 'scope.userInfo',
+			// success() {
+			// // 用户已经同意小程序使用录音功能，后续调用 wx.startRecord 接口不会弹窗询问
+			//  uni.getUserInfo({
+			//  	provider: 'weixin',
+			//  	success: function(infoRes) {
+			//  		console.log(infoRes);
+			//  		that._data.nickNames = infoRes.userInfo.nickName;
+			//  		that._data.avatarUrl = infoRes.userInfo.avatarUrl;
+			//  	},  
+			//      fail:function(res){  
+			//          // 这里res = {"errMsg":"getUserInfo:fail scope unauthorized"}   
+			//          console.log('res='+JSON.stringify(res))  
+			//      }  
+			//  });
+			// }
+			// })
+			// }
+			// }
+			// });
+
+
+			//}
+			//	});
+
 		}
-	};
+	}
 </script>
+
+
+<style>
+	/* 用户盒子 */
+	.userBox {
+		display: flex;
+		justify-content: space-between;
+		align-items: center;
+		padding: 20px;
+		background: linear-gradient(to top right, #63b8ff 0%, #4876ff 25%, #3a5fcd 100%);
+	}
+
+	/* 用户昵称 */
+	.nickName {
+		color: #ffffff;
+	}
+
+	/* 用户头像 */
+	.userIcon {
+		align-self: flex-end;
+		border-radius: 50%;
+		overflow: hidden;
+		width: 100px;
+		height: 100px;
+		box-shadow: 0 1px 2px rgba(0, 0, 0, 0.5)
+	}
+</style>
+
+
 
 <style>
 	.content {

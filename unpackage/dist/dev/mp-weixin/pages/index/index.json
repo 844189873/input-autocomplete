@@ -1,0 +1,6 @@
+{
+  "navigationBarTitleText": "input-autocomelete使用示例",
+  "usingComponents": {
+    "input-autocomplete": "/components/input-autocomplete/input-autocomplete"
+  }
+}

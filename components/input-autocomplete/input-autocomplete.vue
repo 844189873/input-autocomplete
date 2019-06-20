@@ -1,6 +1,6 @@
 <template>
 	<view>
-		<input class="uni-input" :id="id" :placeholder="placeholder" :value="value" @input="onInput" autocomplete="off" />
+		<input class="uni-input" :id="id" :placeholder="placeholder" :value="value" @input="onInput"  autocomplete="off" />
 		<view class="str-auto-complete-container" v-if="isShow">
 			<view v-for="(item, index) in showList" :key="index" class="str-auto-complete-item" @tap="selectThisItem(item)" v-html="item.showString"></view>
 		</view>
@@ -1497,11 +1497,15 @@ export default {
 				});
 			}
 		},
+		isString(str) {
+			return (typeof str == 'string') && str.constructor == String;
+		},
 
 		filterList(stringExp) {
 			let tempArray = [];
 			for (let i = 0; i < this.srcDataList.length; i++) {
-				let temp = this.srcDataList[i];
+				let it=this.srcDataList[i];
+				let temp = it.text || (this.isString(it)?it:temp);
 
 				// let showObject = this.filterString(stringExp, temp);
 				// console.log(showObject);
@@ -1517,7 +1521,8 @@ export default {
 					tempArray.push({
 						orginalString: temp,
 						//number: sameCharNumber,
-						showString: matches.text
+						showString: matches.text,
+						data:it
 					});
 				}
 				// console.log(tempArray);
@@ -1576,6 +1581,7 @@ export default {
 			//this.value = item.orginalString;
 			this.needShow = false;
 			this.$emit('input', item.orginalString);
+			this.$emit('selectItem',item.data);
 		},
 
 		stripDiacritics(text) {
