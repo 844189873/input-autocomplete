@@ -23,6 +23,10 @@ export default {
 		loadAutocompleteData(value) {
 			console.log('每次输入经过防抖处理以后都会进到这里');
 			return Promise.resolve(['汉字行', 'da tang', '三人行', '大马路', '8哥','我是动态数据']);
+		},
+		//响应选择事件，接收选中的数据
+		selectItemD(data) {
+			console.log('收到数据了:', data);
 		}
 	}
 
@@ -34,12 +38,15 @@ export default {
 
 ```
 <view class="unit-item">
-	<view class="unit-item__label">报价单名称：</view>
+	<view class="unit-item__label">名称：</view>
 	<input-autocomplete
 		class="unit-item__input"
-		v-model="name"
+		:value="testObj.dname"
+		v-model="testObj.dname"
 		placeholder="请输入报价单名称"
+		highlightColor="#FF0000"
 		:loadData="loadAutocompleteData"
+		v-on:selectItem="selectItemD"
 	></input-autocomplete>
 </view>
 
@@ -60,10 +67,25 @@ export default {
 						placeholder="请输入报价单名称"
 						highlightColor="#FF0000"
 						:loadData="loadAutocompleteData"
+						v-on:selectItem="selectItemD"
 					></input-autocomplete>
 				</view>
 			</view>
-			<button @tap="printLog">打印结果</button>
+			<view class="unit-title">使用静态数据示例</view>
+			<view class="unit-wrapper">
+				<view class="unit-item">
+					<view class="unit-item__label">名称：</view>
+					<input-autocomplete
+						class="unit-item__input"
+						:value="testObj.sname"
+						v-model="testObj.sname"
+						placeholder="请输入报价单名称"
+						highlightColor="#FF0000"
+						:stringList="autocompleteStringList"
+						v-on:selectItem="selectItemS"
+					></input-autocomplete>
+				</view>
+			</view>
 		</view>
 	</view>
 </template>
@@ -77,20 +99,71 @@ export default {
 	data() {
 		return {
 			testObj: {
+				sname: '静态',
 				dname: '动态'
-			}
+			},
+			//使用静态数据
+			autocompleteStringList: [
+				'汉字行',
+				'guang zhou',
+				{
+					//自定义数据对象必须要有text属性
+					text: 'hello',
+					//其它字段根据业务需要添加
+					key: 'hello key'
+				},
+				'不 行',
+				{
+					//自定义数据对象必须要有text属性
+					text: '我是静态数据',
+					//其它字段根据业务需要添加
+					id: 'hz'
+				}
+			]
 		};
 	},
-	onLoad() {},
 	methods: {
-		//在这里可动态加载提示数据，input-autocomplete有做防抖处理（需设置debounce属性）
 		loadAutocompleteData(value) {
-			console.log('每次输入经过防抖处理以后都会进到这里');
-			return Promise.resolve(['汉字行', 'da tang', '三人行', '大马路', '8哥','我是动态数据']);
+			console.log('每次输入经过防抖处理以后都会进到这里。');
+
+			// 正确的做法：在这个方法内写完所有取数据的逻辑
+			let url = 'https://www.apiopen.top/journalismApi';
+			return uni
+				.request({
+					url: url
+				})
+				.then(ret => {
+					var [error, res] = ret;
+					console.log(res.data);
+					let data = ((res.data || {}).data || {}).toutiao || [];
+					if (data.length <= 0) {
+						return Promise.resolve(['没有数据...']);
+					}
+
+					let retData = [];
+					for (let it of data) {
+						// console.log(it);
+						retData.push({
+							//自定义数据对象必须要有text属性
+							text: it.title,
+							//其它字段根据业务需要添加
+							digest: it.digest
+						});
+					}
+					//console.log(Promise.resolve(retData));
+					return Promise.resolve(retData);
+				});
+
+			//return Promise.resolve(['汉字行', 'da tang', '三人行', '大马路', '8哥', '我是动态数据']);
 		},
-		printLog(){
-			console.log(this.testObj);
+		//响应选择事件，接收选中的数据
+		selectItemD(data) {
+			console.log('收到数据了:', data);
 		}
+	},
+
+	onLoad: function(option) {
+		let that = this;
 	}
 };
 </script>
@@ -100,6 +173,7 @@ export default {
 	text-align: center;
 	height: 100%;
 }
+
 .unit-title {
 	font-size: 30upx;
 	/* font-style: oblique; */
@@ -108,6 +182,7 @@ export default {
 	padding-bottom: 10upx;
 	text-align: left;
 }
+
 .unit-wrapper {
 	padding: 44upx 0;
 	margin: 0 30upx;
@@ -116,6 +191,7 @@ export default {
 	background-color: #fff;
 	color: #000;
 }
+
 .unit-item {
 	display: flex;
 	justify-content: flex-end;
@@ -123,6 +199,7 @@ export default {
 	padding-left: 30upx;
 	margin-bottom: 30upx;
 }
+
 .unit-item__header {
 	margin-top: 0;
 	margin-bottom: 8upx;
@@ -130,6 +207,7 @@ export default {
 	display: flex;
 	justify-content: space-between;
 }
+
 .unit-item__label {
 	padding-top: 2px;
 	text-align: right;
@@ -138,6 +216,7 @@ export default {
 	min-width: 188upx;
 	width: 240upx;
 }
+
 .unit-item__input {
 	text-align: left;
 	width: 100%;
@@ -149,6 +228,7 @@ export default {
 	line-height: 52.5upx;
 }
 </style>
+
 
 
 ```
@@ -168,11 +248,31 @@ export default {
 		return {
 			name: '',
 			//使用静态数据
-			autocompleteStringList: ['汉字行', 'guang zhou', 'hello', '不 行','我是静态数据']
+			autocompleteStringList: [
+				'汉字行',
+				'guang zhou',
+				{
+					//自定义数据对象必须要有text属性
+					text: 'hello',
+					//其它字段根据业务需要添加
+					key: 'hello key'
+				},
+				'不 行',
+				{
+					//自定义数据对象必须要有text属性
+					text: '我是静态数据',
+					//其它字段根据业务需要添加
+					id: 'hz'
+				}
+			]
 		};
 	},
 	
 	methods: {
+		//响应选择事件，接收选中的数据
+		selectItemS(data) {
+			console.log('收到数据了:', data);
+		},
 		printLog(){
 			console.log(this.testObj);
 		}
@@ -186,12 +286,15 @@ export default {
 
 ```
 <view class="unit-item">
-	<view class="unit-item__label">报价单名称：</view>
+	<view class="unit-item__label">名称：</view>
 	<input-autocomplete
 		class="unit-item__input"
-		v-model="name"
+		:value="testObj.sname"
+		v-model="testObj.sname"
 		placeholder="请输入报价单名称"
+		highlightColor="#FF0000"
 		:stringList="autocompleteStringList"
+		v-on:selectItem="selectItemS"
 	></input-autocomplete>
 </view>
 
@@ -212,10 +315,10 @@ export default {
 						placeholder="请输入报价单名称"
 						highlightColor="#FF0000"
 						:stringList="autocompleteStringList"
+						v-on:selectItem="selectItemS"
 					></input-autocomplete>
 				</view>
 			</view>
-			<button @tap="printLog">打印结果</button>
 		</view>
 	</view>
 </template>
@@ -229,15 +332,41 @@ export default {
 	data() {
 		return {
 			testObj: {
-				sname: '静态'
+				sname: '静态',
+				dname: '动态'
 			},
 			//使用静态数据
-			autocompleteStringList: ['汉字行', 'guang zhou', 'hello', '不 行','我是静态数据']
+			autocompleteStringList: [
+				'汉字行',
+				'guang zhou',
+				{
+					//自定义数据对象必须要有text属性
+					text: 'hello',
+					//其它字段根据业务需要添加
+					key: 'hello key'
+				},
+				'不 行',
+				{
+					//自定义数据对象必须要有text属性
+					text: '我是静态数据',
+					//其它字段根据业务需要添加
+					id: 'hz'
+				}
+			]
 		};
 	},
-	onLoad() {},
 	methods: {
-		
+		//响应选择事件，接收选中的数据
+		selectItemS(data) {
+			console.log('收到数据了:', data);
+		},
+		printLog(){
+			console.log(this.testObj);
+		}
+	},
+
+	onLoad: function(option) {
+		let that = this;
 	}
 };
 </script>
@@ -247,6 +376,7 @@ export default {
 	text-align: center;
 	height: 100%;
 }
+
 .unit-title {
 	font-size: 30upx;
 	/* font-style: oblique; */
@@ -255,6 +385,7 @@ export default {
 	padding-bottom: 10upx;
 	text-align: left;
 }
+
 .unit-wrapper {
 	padding: 44upx 0;
 	margin: 0 30upx;
@@ -263,6 +394,7 @@ export default {
 	background-color: #fff;
 	color: #000;
 }
+
 .unit-item {
 	display: flex;
 	justify-content: flex-end;
@@ -270,6 +402,7 @@ export default {
 	padding-left: 30upx;
 	margin-bottom: 30upx;
 }
+
 .unit-item__header {
 	margin-top: 0;
 	margin-bottom: 8upx;
@@ -277,6 +410,7 @@ export default {
 	display: flex;
 	justify-content: space-between;
 }
+
 .unit-item__label {
 	padding-top: 2px;
 	text-align: right;
@@ -285,6 +419,7 @@ export default {
 	min-width: 188upx;
 	width: 240upx;
 }
+
 .unit-item__input {
 	text-align: left;
 	width: 100%;
@@ -299,6 +434,7 @@ export default {
 
 
 
+
 ```
 
 ## 3.其它说明
@@ -310,6 +446,9 @@ export default {
 * 增加读取提示数据时的防抖功能，对于有性能要求的场景可设置防抖时间
 
 # 版本升级日志
+## v1.0.5
+* 支持自定义数据对象
+* 结果列表增加选择事件selectItem，用于接收所选中条目携带的数据
 ## v1.0.4
 * 修复组件会修改外部数据导致告警的问题
 * 优化代码
