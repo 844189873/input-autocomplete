@@ -80,8 +80,8 @@ export default {
 				})
 				.then(ret => {
 					var [error, res] = ret;
-					console.log(res.data);
-					let data = ((res.data || {}).data || {}).toutiao || [];
+					console.log(res);
+					let data = (((res||{}).data || {}).data || {}).toutiao || [];
 					if (data.length <= 0) {
 						return Promise.resolve(['没有数据...']);
 					}

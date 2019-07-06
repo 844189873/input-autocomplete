@@ -1,7 +1,8 @@
 <template>
 	<view>
-		<input class="uni-input" :id="id" :placeholder="placeholder" :value="value" @input="onInput"  autocomplete="off" />
+		<input class="uni-input" :id="id" :placeholder="placeholder" :value="value" @focus="onInput" @input="onInput" autocomplete="off" />
 		<view class="str-auto-complete-container" v-if="isShow">
+			<view class="str-auto-complete-mask" @tap="onMaskTap"></view>
 			<view v-for="(item, index) in showList" :key="index" class="str-auto-complete-item" @tap="selectThisItem(item)" v-html="item.showString"></view>
 		</view>
 	</view>
@@ -26,7 +27,7 @@ export default {
 		// 执行自动补全时的防抖时间
 		debounce: {
 			type: Number,
-			default: null
+			default: undefined
 		},
 		// 触发自动补全的最小输入长度
 		min: {
@@ -49,6 +50,9 @@ export default {
 			needShow: false,
 
 			debounceTask: undefined,
+
+			//当前时刻的输入值
+			curInputValue: '',
 
 			//英文字到其它字符的映射
 			diacritics: {
@@ -1466,9 +1470,12 @@ export default {
 		},
 		onInput(event) {
 			let value = event.target.value;
+			this.$emit('input', value);
+			this.curInputValue = value;
 
 			// If Debounce
 			if (this.debounce) {
+				console.log(this.debounce);
 				if (this.debounceTask !== undefined) clearTimeout(this.debounceTask);
 				this.debounceTask = setTimeout(() => {
 					return this.getData(value);
@@ -1476,6 +1483,9 @@ export default {
 			} else {
 				return this.getData(value);
 			}
+		},
+		onMaskTap(){
+			this.needShow = false;
 		},
 
 		getData(value) {
@@ -1488,8 +1498,8 @@ export default {
 				return task.then(data => {
 					this.srcDataList = data;
 					this.filterList(value);
-					this.$emit('input', value);
-					if (value.length > 0) {
+					// this.$emit('input', value);
+					if (/* value.length > 0 && */ value == this.curInputValue) {
 						this.needShow = true;
 					} else {
 						this.needShow = false;
@@ -1498,14 +1508,14 @@ export default {
 			}
 		},
 		isString(str) {
-			return (typeof str == 'string') && str.constructor == String;
+			return typeof str == 'string' && str.constructor == String;
 		},
 
 		filterList(stringExp) {
 			let tempArray = [];
 			for (let i = 0; i < this.srcDataList.length; i++) {
-				let it=this.srcDataList[i];
-				let temp = it.text || (this.isString(it)?it:temp);
+				let it = this.srcDataList[i];
+				let temp = it.text || (this.isString(it) ? it : temp);
 
 				// let showObject = this.filterString(stringExp, temp);
 				// console.log(showObject);
@@ -1522,7 +1532,7 @@ export default {
 						orginalString: temp,
 						//number: sameCharNumber,
 						showString: matches.text,
-						data:it
+						data: it
 					});
 				}
 				// console.log(tempArray);
@@ -1578,10 +1588,11 @@ export default {
 			}
 		},
 		selectThisItem(item) {
+			console.log('selectThisItem...........')
 			//this.value = item.orginalString;
 			this.needShow = false;
 			this.$emit('input', item.orginalString);
-			this.$emit('selectItem',item.data);
+			this.$emit('selectItem', item.data);
 		},
 
 		stripDiacritics(text) {
@@ -1684,15 +1695,28 @@ export default {
 </script>
 
 <style lang="scss">
+.str-auto-complete-mask {
+	width: 100%;
+	height: 100%;
+	// background: rgba(0, 0, 0, 0.8);
+	position: fixed;
+	left: 0;
+	top: 0;
+	bottom: 0;
+	right: 0;
+	z-index: 998;
+}
 .str-auto-complete-container {
 	min-width: 15%;
 	height: auto;
 	border: 1px solid #f3f3f4;
 	position: absolute;
-	z-index: 999;
+	z-index: 997;
 	background: #fff;
 	.str-auto-complete-item {
+		position: relative;
 		padding: 10upx;
+		z-index: 999
 	}
 }
 </style>
