@@ -1496,7 +1496,7 @@ export default {
 			const task = this.defultLoadData(value);
 			if (task && task.then) {
 				return task.then(data => {
-					this.srcDataList = data;
+					this.srcDataList = data||[];
 					this.filterList(value);
 					// this.$emit('input', value);
 					if (/* value.length > 0 && */ value == this.curInputValue) {
