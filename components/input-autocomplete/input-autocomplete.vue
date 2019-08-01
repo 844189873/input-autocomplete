@@ -1457,7 +1457,7 @@ export default {
 				}
 			}
 
-			//返回为数组格式，例"广州"=>["GZ", "GUANGZHOU"]，第一项为简拼第二项为全拼
+			//返回为数组格式，例"大  广州"=>["D-GZ", "DA-GUANGZHOU"]，第一项为简拼第二项为全拼，一个和多个空格都会转成一个半角中划线
 			String.prototype.toPinYin = function() {
 				return chnToPy(this);
 			};
@@ -1645,16 +1645,21 @@ export default {
 			/**支持简拼  begin**/
 			var original = '';
 			var original1 = '';
-			var term = that.stripDiacritics(params.term).toUpperCase();
 			if (that.stripDiacritics(data.text).toPinYin != undefined) {
 				var result = that.stripDiacritics(data.text).toPinYin();
-				original = result[0].indexOf(that.stripDiacritics(params.term).toUpperCase());
-				original1 = result[1].indexOf(that.stripDiacritics(params.term).toUpperCase());
+				var fmtTerm = that.stripDiacritics(params.term).toUpperCase();
+				//兼容空格匹配
+				fmtTerm = fmtTerm.replace(/ /g, '-');
+				while (fmtTerm.indexOf('--') > 0) {
+					fmtTerm = fmtTerm.replace('--', '-');
+				}
+				original = result[0].indexOf(fmtTerm);
+				original1 = result[1].indexOf(fmtTerm);
 				if (original == -1 && original1 == -1) {
 					original = that
 						.stripDiacritics(data.text)
 						.toUpperCase()
-						.indexOf(params.term);
+						.indexOf(fmtTerm);
 				}
 			}
 
