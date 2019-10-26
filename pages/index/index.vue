@@ -7,7 +7,7 @@
 					<view class="unit-item__label">名称：</view>
 					<input-autocomplete class="unit-item__input" :value="testObj.dname" v-model="testObj.dname" placeholder="请输入报价单名称"
 					 highlightColor="#FF0000" :loadData="loadAutocompleteData" v-on:selectItem="selectItemD"
-					 :debounce = "300"></input-autocomplete>
+					 :debounce = "1000"></input-autocomplete>
 				</view>
 			</view>
 			<view class="unit-title">使用静态数据示例</view>
