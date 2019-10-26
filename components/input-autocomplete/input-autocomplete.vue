@@ -24,7 +24,7 @@ export default {
 		stringList: {
 			type: Array
 		},
-		// 执行自动补全时的防抖时间
+		// 执行自动补全时的防抖时间（毫秒）
 		debounce: {
 			type: Number,
 			default: undefined
@@ -44,7 +44,7 @@ export default {
 	},
 	data() {
 		return {
-			srcDataList: [],
+			srcDataList: this.stringList||[],
 			showList: [],
 
 			needShow: false,
@@ -904,10 +904,9 @@ export default {
 		}
 	},
 	created() {
-		if (this.stringList) {
-			this.stringList.sort();
-			this.srcDataList = this.stringList;
-			this.showList = this.stringList;
+		if (this.srcDataList) {
+			this.srcDataList.sort();
+			this.showList = this.srcDataList;
 		}
 		if (this.loadData) {
 			this.defultLoadData = this.loadData;
@@ -1493,9 +1492,7 @@ export default {
 				this.$emit('input', value);
 				return;
 			}
-			const task = this.defultLoadData(value);
-			if (task && task.then) {
-				return task.then(data => {
+			this.defultLoadData(value).then(data => {
 					this.srcDataList = data||[];
 					this.filterList(value);
 					// this.$emit('input', value);
@@ -1505,7 +1502,20 @@ export default {
 						this.needShow = false;
 					}
 				});
-			}
+				
+			// const task = this.defultLoadData(value);
+			// if (task && task.then) {
+			// 	return task.then(data => {
+			// 		this.srcDataList = data||[];
+			// 		this.filterList(value);
+			// 		// this.$emit('input', value);
+			// 		if (/* value.length > 0 && */ value == this.curInputValue) {
+			// 			this.needShow = true;
+			// 		} else {
+			// 			this.needShow = false;
+			// 		}
+			// 	});
+			// }
 		},
 		isString(str) {
 			return typeof str == 'string' && str.constructor == String;
@@ -1695,6 +1705,11 @@ export default {
 			}
 			return result;
 		}
+	},
+	watch:{
+		stringList(val) {
+            this.srcDataList = val;
+        }
 	}
 };
 </script>

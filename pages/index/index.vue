@@ -6,7 +6,8 @@
 				<view class="unit-item">
 					<view class="unit-item__label">名称：</view>
 					<input-autocomplete class="unit-item__input" :value="testObj.dname" v-model="testObj.dname" placeholder="请输入报价单名称"
-					 highlightColor="#FF0000" :loadData="loadAutocompleteData" v-on:selectItem="selectItemD"></input-autocomplete>
+					 highlightColor="#FF0000" :loadData="loadAutocompleteData" v-on:selectItem="selectItemD"
+					 :debounce = "2000"></input-autocomplete>
 				</view>
 			</view>
 			<view class="unit-title">使用静态数据示例</view>
@@ -18,6 +19,7 @@
 				</view>
 			</view>
 			<button @tap="printLog">打印结果</button>
+			<button @tap="changeStaticData">改变静态数据</button>
 		</view>
 	</view>
 </template>
@@ -104,6 +106,28 @@
 			},
 			printLog() {
 				console.log(this.testObj);
+			}
+			,
+			changeStaticData() {
+				console.log('改变静态数据');
+				this.autocompleteStringList= [
+					'1汉字行',
+					'1change data',
+					'1guang zhou',
+					{
+						//自定义数据对象必须要有text属性
+						text: '1hello',
+						//其它字段根据业务需要添加
+						key: '1hello key'
+					},
+					'1不 行',
+					{
+						//自定义数据对象必须要有text属性
+						text: '1我是静态数据',
+						//其它字段根据业务需要添加
+						id: '1hz'
+					}
+				];
 			}
 		},
 
