@@ -1492,12 +1492,12 @@ export default {
 			}
 		},
 		onInputMaskTap(){
-			console.log('iac-input-mask tap...');
+			// console.log('iac-input-mask tap...');
 			this.inputMaskZindex = 0;
 			this.doInput(this.curInputValue);
 		},
 		onMaskTap(){
-			console.log('iac-mask tap...');
+			// console.log('iac-mask tap...');
 			this.needShow = false;
 			this.inputMaskZindex = 9999;
 		},
