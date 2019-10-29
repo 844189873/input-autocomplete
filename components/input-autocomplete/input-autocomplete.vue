@@ -1,6 +1,9 @@
 <template>
 	<view>
-		<input class="uni-input" :id="id" :placeholder="placeholder" :value="value" @focus="onInput" @input="onInput" autocomplete="off" />
+		<view class="iac-input-wrap">
+			<view class="iac-input-mask"   @click="onInputMaskTap"></view>
+			<input class="iac-input" :id="id" :placeholder="placeholder" :value="value" @input="onInput" autocomplete="off" />
+		</view>
 		<view class="str-auto-complete-container" v-if="isShow">
 			<view class="str-auto-complete-mask" @tap="onMaskTap"></view>
 			<view v-for="(item, index) in showList" :key="index" class="str-auto-complete-item" @tap="selectThisItem(item)" v-html="item.showString"></view>
@@ -46,7 +49,8 @@ export default {
 		return {
 			srcDataList: this.stringList||[],
 			showList: [],
-
+			
+			inputMaskZindex:99999,
 			needShow: false,
 
 			debounceTask: undefined,
@@ -1468,10 +1472,14 @@ export default {
 			return Promise.resolve(this.srcDataList);
 		},
 		onInput(event) {
+			console.log(event)
 			let value = event.target.value;
+			this.doInput(value);
+		},
+		doInput(value){
 			this.$emit('input', value);
 			this.curInputValue = value;
-
+			
 			// If Debounce
 			if (this.debounce) {
 				console.log(this.debounce);
@@ -1483,8 +1491,15 @@ export default {
 				return this.getData(value);
 			}
 		},
+		onInputMaskTap(){
+			console.log('iac-input-mask tap...');
+			this.inputMaskZindex = 0;
+			this.doInput(this.curInputValue);
+		},
 		onMaskTap(){
+			console.log('iac-mask tap...');
 			this.needShow = false;
+			this.inputMaskZindex = 9999;
 		},
 
 		getData(value) {
@@ -1715,6 +1730,26 @@ export default {
 </script>
 
 <style lang="scss">
+	.iac-input-wrap{
+		position: relative;
+		width: 100%;
+		height: 100%;
+		// width: 200px;
+		height: 28px;
+	}
+	.iac-input-mask{
+		position: absolute;
+		width: 100%;
+		height: 100%;
+		z-index: 9999;
+		// background-color:red ;
+	}
+	.iac-input{
+		position: absolute;
+		width: 100%;
+		height: 100%;
+		z-index: 1;
+	}
 .str-auto-complete-mask {
 	width: 100%;
 	height: 100%;

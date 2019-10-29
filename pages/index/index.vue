@@ -18,6 +18,13 @@
 					 highlightColor="#FF0000" :stringList="autocompleteStringList" v-on:selectItem="selectItemS"></input-autocomplete>
 				</view>
 			</view>
+			
+			<view class="unit-wrapper">
+			<view class="unit-item">
+				<view class="unit-item__label">普通输入框：</view>
+				<textarea type="text" class="unit-item__input" v-model="testObj.remarks" placeholder="请输入备注" auto-height />
+			</view>
+			</view>
 			<button @tap="printLog">打印结果</button>
 			<button @tap="changeStaticData">改变静态数据</button>
 		</view>
@@ -33,7 +40,7 @@
 		data() {
 			return {
 				testObj: {
-					sname: '静态',
+					sname: '',
 					dname: '动态'
 				},
 				//使用静态数据
