@@ -1,8 +1,9 @@
 <template>
 	<view>
 		<view class="iac-input-wrap">
-			<view class="iac-input-mask"   @click="onInputMaskTap"></view>
+			<view class="iac-input-mask"   @click="onInputMaskTap">
 			<input class="iac-input" :id="id" :placeholder="placeholder" :value="value" @input="onInput" autocomplete="off" />
+			</view>
 		</view>
 		<view class="str-auto-complete-container" v-if="isShow">
 			<view class="str-auto-complete-mask" @tap="onMaskTap"></view>
@@ -1474,10 +1475,10 @@ export default {
 		onInput(event) {
 			console.log(event)
 			let value = event.target.value;
+			this.$emit('input', value);
 			this.doInput(value);
 		},
 		doInput(value){
-			this.$emit('input', value);
 			this.curInputValue = value;
 			
 			// If Debounce
