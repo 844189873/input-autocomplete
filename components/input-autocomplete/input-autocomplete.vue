@@ -1473,7 +1473,7 @@ export default {
 			return Promise.resolve(this.srcDataList);
 		},
 		onInput(event) {
-			console.log(event)
+			// console.log(event)
 			let value = event.target.value;
 			this.$emit('input', value);
 			this.doInput(value);
@@ -1483,7 +1483,7 @@ export default {
 			
 			// If Debounce
 			if (this.debounce) {
-				console.log(this.debounce);
+				// console.log(this.debounce);
 				if (this.debounceTask !== undefined) clearTimeout(this.debounceTask);
 				this.debounceTask = setTimeout(() => {
 					return this.getData(value);
