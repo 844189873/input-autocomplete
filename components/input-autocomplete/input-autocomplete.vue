@@ -1500,7 +1500,7 @@ export default {
 		onMaskTap(){
 			// console.log('iac-mask tap...');
 			this.needShow = false;
-			this.inputMaskZindex = 9999;
+			this.inputMaskZindex = 9990;
 		},
 
 		getData(value) {
@@ -1742,7 +1742,7 @@ export default {
 		position: absolute;
 		width: 100%;
 		height: 100%;
-		z-index: 9999;
+		z-index: 9990;
 		// background-color:red ;
 	}
 	.iac-input{
@@ -1760,19 +1760,19 @@ export default {
 	top: 0;
 	bottom: 0;
 	right: 0;
-	z-index: 998;
+	z-index: 9999;
 }
 .str-auto-complete-container {
 	min-width: 15%;
 	height: auto;
 	border: 1px solid #f3f3f4;
 	position: absolute;
-	z-index: 997;
+	z-index: 9997;
 	background: #fff;
 	.str-auto-complete-item {
 		position: relative;
 		padding: 10upx;
-		z-index: 999
+		z-index: 9999
 	}
 }
 </style>
