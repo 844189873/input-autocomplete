@@ -40,7 +40,7 @@
 		data() {
 			return {
 				testObj: {
-					sname: '',
+					sname: '静',
 					dname: '动态'
 				},
 				//使用静态数据
@@ -73,12 +73,9 @@
 				// 基于同样的原因，也无法通过this去调用当前页的其它方法。
 				// 【正确的做法】：在这个方法内写完所有取数据的逻辑，如果需要用输入框的值则取这里的value参数
 				
-				//可以通过$root访问根父组件，也就是当前页面
+				//可以通过$root拿到当前页面的引用，从而访问当前页面的数据
 				let that = this.$root;
-				console.log('访问当前页的数据:',{
-					dname:that.testObj.dname,
-					sname:that.testObj.sname
-				});
+				console.log('访问当前页的数据:',that.testObj.sname);
 				
 				let url = 'https://www.apiopen.top/journalismApi';
 				return uni
