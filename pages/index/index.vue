@@ -22,7 +22,7 @@
 			<view class="unit-wrapper">
 			<view class="unit-item">
 				<view class="unit-item__label">普通输入框：</view>
-				<textarea type="text" class="unit-item__input" v-model="testObj.remarks" placeholder="请输入备注" auto-height />
+				<input type="text" class="unit-item__input" v-model="testObj.remarks" placeholder="请输入备注" />
 			</view>
 			</view>
 			<button @tap="printLog">打印结果</button>
@@ -72,6 +72,13 @@
 				// 所以无法在这里通过this去取当前页面的数据；
 				// 基于同样的原因，也无法通过this去调用当前页的其它方法。
 				// 【正确的做法】：在这个方法内写完所有取数据的逻辑，如果需要用输入框的值则取这里的value参数
+				
+				//可以通过$root访问根父组件，也就是当前页面
+				let that = this.$root;
+				console.log('访问当前页的数据:',{
+					dname:that.testObj.dname,
+					sname:that.testObj.sname
+				});
 				
 				let url = 'https://www.apiopen.top/journalismApi';
 				return uni
