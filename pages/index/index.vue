@@ -5,7 +5,8 @@
 			<view class="unit-wrapper" v-for="(item,i) in testList" v-bind:key="i">
 				<view class="unit-item">
 					<view class="unit-item__label">名称：</view>
-					<input-autocomplete class="unit-item__input" :value="testObj.dname" v-model="testObj.dname" placeholder="请输入报价单名称"
+					<!-- 【重要！！！】在循环中,向组件传递额外参数,需要使用计算属性 -->
+					<input-autocomplete class="unit-item__input" :value="item.dname" v-model="item.dname" placeholder="请输入报价单名称"
 					 highlightColor="#FF0000" :loadData="loadAutocompleteData" v-on:selectItem="selectItemD"
 					 :param = "computedParam({item,i})"
 					 :debounce = "1000"></input-autocomplete>
@@ -112,6 +113,7 @@
 			//响应选择事件，接收选中的数据
 			selectItemD(data) {
 				//选择事件
+				//【重要！！！】v1.0.12以后，选中的数据格式发生了变化，新版本中选中的数据的格式为：{'selectItem':选中的数据,'param':传入组件的自定义参数}
 				console.log('收到数据了:', data);
 			},
 			selectItemS(data) {
