@@ -2,14 +2,16 @@
 	<view class="page">
 		<view class="content">
 			<view class="unit-title">使用动态数据示例</view>
-			<view class="unit-wrapper">
+			<view class="unit-wrapper" v-for="(item,i) in testList" v-bind:key="i">
 				<view class="unit-item">
 					<view class="unit-item__label">名称：</view>
 					<input-autocomplete class="unit-item__input" :value="testObj.dname" v-model="testObj.dname" placeholder="请输入报价单名称"
 					 highlightColor="#FF0000" :loadData="loadAutocompleteData" v-on:selectItem="selectItemD"
+					 :param = "computedParam({item,i})"
 					 :debounce = "1000"></input-autocomplete>
 				</view>
 			</view>
+			
 			<view class="unit-title">使用静态数据示例</view>
 			<view class="unit-wrapper">
 				<view class="unit-item">
@@ -39,6 +41,7 @@
 		},
 		data() {
 			return {
+				testList:[{t1:"tt1"},{t1:"tt2"}],
 				testObj: {
 					sname: '静',
 					dname: '动态'
@@ -77,34 +80,34 @@
 				let that = this.$root;
 				console.log('访问当前页的数据:',that.testObj.sname);
 				
-				let url = 'https://www.apiopen.top/journalismApi';
-				return uni
-					.request({
-						url: url
-					})
-					.then(ret => {
-						var [error, res] = ret;
-						console.log(res);
-						let data = (((res || {}).data || {}).data || {}).toutiao || [];
-						if (data.length <= 0) {
-							return Promise.resolve(['没有数据...']);
-						}
+				// let url = 'https://www.apiopen.top/journalismApi';
+				// return uni
+				// 	.request({
+				// 		url: url
+				// 	})
+				// 	.then(ret => {
+				// 		var [error, res] = ret;
+				// 		console.log(res);
+				// 		let data = (((res || {}).data || {}).data || {}).toutiao || [];
+				// 		if (data.length <= 0) {
+				// 			return Promise.resolve(['没有数据...']);
+				// 		}
 
-						let retData = [];
-						for (let it of data) {
-							// console.log(it);
-							retData.push({
-								//自定义数据对象必须要有text属性
-								text: it.title,
-								//其它字段根据业务需要添加
-								digest: it.digest
-							});
-						}
-						//console.log(Promise.resolve(retData));
-						return Promise.resolve(retData);
-					});
+				// 		let retData = [];
+				// 		for (let it of data) {
+				// 			// console.log(it);
+				// 			retData.push({
+				// 				//自定义数据对象必须要有text属性
+				// 				text: it.title,
+				// 				//其它字段根据业务需要添加
+				// 				digest: it.digest
+				// 			});
+				// 		}
+				// 		//console.log(Promise.resolve(retData));
+				// 		return Promise.resolve(retData);
+				// 	});
 
-				//return Promise.resolve(['汉字行', 'da tang', '三人行', '大马路', '8哥', '我是动态数据']);
+				return Promise.resolve(['汉字行', 'da tang', '三人行', '大马路', '8哥', '我是动态数据']);
 			},
 			//响应选择事件，接收选中的数据
 			selectItemD(data) {
@@ -139,6 +142,17 @@
 						id: '1hz'
 					}
 				];
+			}
+		},
+		
+		computed:{
+			computedParam(){
+				return function({item,i}){
+					return {
+						data:item,
+						index:i,
+					};
+				}
 			}
 		},
 

@@ -25,6 +25,9 @@
 			placeholder: {
 				type: String
 			},
+			param:{
+				type: Object
+			},
 			//静态数据
 			stringList: {
 				type: Array
@@ -49,6 +52,7 @@
 		},
 		data() {
 			return {
+				extraParam: this.param,
 				srcDataList: this.stringList || [],
 				showList: [],
 
@@ -1550,10 +1554,11 @@
 			},
 			selectThisItem(item) {
 				console.log('selectThisItem...........')
+				console.log('extraParam==>',this.extraParam)
 				//this.value = item.orginalString;
 				this.needShow = false;
 				this.$emit('input', item.orginalString);
-				this.$emit('selectItem', item.data);
+				this.$emit('selectItem', {'selectItem':item.data,'param':this.extraParam});
 			},
 
 			stripDiacritics(text) {
@@ -1660,6 +1665,9 @@
 		watch: {
 			stringList(val) {
 				this.srcDataList = val;
+			},
+			param(val){
+				this.extraParam = val;
 			}
 		}
 	};
